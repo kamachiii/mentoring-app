@@ -4,7 +4,7 @@
 - Ariq
 - Eka
 - Lalu
-- Kamil
+- Muhammad Kamil
 - Zaid
 
 ## Requirements
