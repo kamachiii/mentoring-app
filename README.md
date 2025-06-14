@@ -2,7 +2,7 @@
 
 - Adit
 - Ariq
-- Eka
+- Eka Vitaloka
 - Lalu
 - Muhammad Kamil
 - Zaid
