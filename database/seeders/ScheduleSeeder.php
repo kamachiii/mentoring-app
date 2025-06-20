@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Schedule;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class ScheduleSeeder extends Seeder
 {
@@ -12,6 +13,6 @@ class ScheduleSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Schedule::factory()->count(8)->create();
     }
 }

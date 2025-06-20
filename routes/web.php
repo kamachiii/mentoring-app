@@ -4,8 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
 
+Route::get('/', function () {
+    return view('landing-page');
+});
+
 Route::middleware('auth')->group(function () {
-    Route::get('/', function () {return view('layouts.dashboard');})->name('dashboard');
+    Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

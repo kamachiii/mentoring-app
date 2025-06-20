@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Discussion;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DiscussionSeeder extends Seeder
 {
@@ -12,6 +13,6 @@ class DiscussionSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Discussion::factory()->count(20)->create();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -31,7 +32,13 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::logout();
-        Alert::info('Logged Out', 'You have been logged out successfully.');
+        Alert::success('Logged Out', 'You have been logged out successfully.');
         return redirect()->route('login')->with('status', 'You have been logged out successfully.');
+    }
+
+    public function dashboard()
+    {
+        $users = User::all();
+        return view('layouts.dashboard', compact('users'));
     }
 }

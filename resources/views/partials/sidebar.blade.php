@@ -3,7 +3,7 @@
         <!--begin::Sidebar Brand-->
         <div class="sidebar-brand">
           <!--begin::Brand Link-->
-          <a href="./index.html" class="brand-link">
+          <a href="{{ route('dashboard') }}" class="brand-link">
             <!--begin::Brand Image-->
             <img
               src="{{ asset('assets/img/AdminLTELogo.png') }}"
@@ -12,7 +12,7 @@
             />
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            <span class="brand-text fw-light">AdminLTE 4</span>
+            <span class="brand-text fw-light">MentorLTE</span>
             <!--end::Brand Text-->
           </a>
           <!--end::Brand Link-->
@@ -29,10 +29,45 @@
               data-accordion="false"
             >
               <li class="nav-item">
-                <a href="#" class="nav-link @if (Route::currentRouteName() == 'dashboard') active @endif">
+                <a href="{{ route('dashboard') }}" class="nav-link @if (Route::currentRouteName() == 'dashboard') active @endif">
                   <i class="nav-icon bi bi-speedometer"></i>
                   <p>
                     Dashboard
+                  </p>
+                </a>
+              </li>
+              {{-- Admin Sidebar --}}
+              @if (Auth::user()->hasRole('admin'))
+              <li class="nav-item">
+                <a href="#" class="nav-link @if (Route::currentRouteName() == 'managemen-pengguna') active @endif">
+                  <i class="nav-icon bi bi-people"></i>
+                  <p>
+                    Managemen Pengguna
+                  </p>
+                </a>
+              </li>
+              @endif
+              <li class="nav-item">
+                <a href="#" class="nav-link @if (Route::currentRouteName() == 'jadwal-mentoring') active @endif">
+                  <i class="nav-icon bi bi-calendar-event"></i>
+                  <p>
+                    Jadwal Mentoring
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link @if (Route::currentRouteName() == 'absensi') active @endif">
+                  <i class="nav-icon bi bi-journal-check"></i>
+                  <p>
+                    Absensi
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link @if (Route::currentRouteName() == 'forum-diskusi') active @endif">
+                  <i class="nav-icon bi bi-chat-left-text"></i>
+                  <p>
+                    Forum Diskusi
                   </p>
                 </a>
               </li>

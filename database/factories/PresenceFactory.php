@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,9 @@ class PresenceFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => User::factory(),
+            'schedule_id' => Schedule::factory(),
+            'status' => $this->faker->randomElement(['present', 'absent', 'sick', 'permit']),
         ];
     }
 }

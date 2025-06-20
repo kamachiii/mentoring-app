@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Presence;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class PresenceSeeder extends Seeder
 {
@@ -12,6 +13,6 @@ class PresenceSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        Presence::factory()->count(10)->create();
     }
 }

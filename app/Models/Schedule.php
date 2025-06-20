@@ -9,4 +9,23 @@ class Schedule extends Model
 {
     /** @use HasFactory<\Database\Factories\ScheduleFactory> */
     use HasFactory;
+
+    protected $fillable = [
+        'users_id',
+        'date',
+        'start_time',
+        'end_time',
+        'topic',
+        'description',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'users_id');
+    }
+    
+    public function presences()
+    {
+        return $this->hasMany(Presence::class);
+    }
 }

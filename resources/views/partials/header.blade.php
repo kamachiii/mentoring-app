@@ -159,7 +159,7 @@
               </a>
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <!--begin::User Image-->
-                <li class="user-header text-bg-primary">
+                <li class="user-header text-bg-secondary">
                   <img
                     src="{{ Auth::user()->profile_picture == NULL ? asset('assets/img/user2-160x160.jpg') : asset('storage/profile_picture/'.Auth::user()->profile_picture) }}"
                     class="rounded-circle shadow"
@@ -182,10 +182,10 @@
                 <!--end::Menu Body-->
                 <!--begin::User Footer-->
                 <li class="user-footer">
-                    <a href="#" class="btn btn-default btn-flat">Profile</a>
+                    <a href="#" class="btn btn-default btn-flat shadow-2xl">Profile</a>
                     <form action="{{ route('logout') }}" class="d-inline" method="post">
                         @csrf
-                        <button type="submit" class="btn btn-default btn-flat float-end">Sign out</button>
+                        <button type="submit" class="btn btn-default btn-flat float-end shadow-2xl">Sign out</button>
                     </form>
                 </li>
                 <!--end::User Footer-->

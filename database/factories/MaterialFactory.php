@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,10 @@ class MaterialFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'schedule_id' => Schedule::factory(),
+            'title' => $this->faker->sentence(4),
+            'description' => $this->faker->optional()->paragraph(),
+            'file_path' => $this->faker->optional()->lexify('materials/files/????????.pdf'),
         ];
     }
 }

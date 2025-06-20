@@ -5,24 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Presence extends Model
+class Comment extends Model
 {
-    /** @use HasFactory<\Database\Factories\PresenceFactory> */
+    /** @use HasFactory<\Database\Factories\CommentFactory> */
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'schedule_id',
-        'status',
+        'discussion_id',
+        'content',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-
-    public function schedule()
+    public function discussion()
     {
-        return $this->belongsTo(Schedule::class);
+        return $this->belongsTo(Discussion::class);
     }
 }
