@@ -147,6 +147,7 @@
               </a>
             </li>
             <!--end::Fullscreen Toggle-->
+            @auth
             <!--begin::User Menu Dropdown-->
             <li class="nav-item dropdown user-menu">
               <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
@@ -192,6 +193,13 @@
               </ul>
             </li>
             <!--end::User Menu Dropdown-->
+            @endauth
+
+            @guest
+            <li class="nav-item">
+              <a href="{{ route('login') }}" class="nav-link">Login</a>
+            </li>
+            @endguest
           </ul>
           <!--end::End Navbar Links-->
         </div>

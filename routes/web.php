@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\MentoringController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
@@ -21,17 +23,33 @@ Route::middleware('guest')->group(function () {
 
 });
 
+// untuk admin mentor sama user harus nya sudah bisa bang cuman middlewarenya masih blm jalan jadi dia ga kebaca rolenya saya kasih catatan agar tidak lupa
 // Routes for Admin
 Route::middleware(['auth', 'role:admin'])->group(function () {
+    // Route::resource('mentoring', App\Http\Controllers\MentoringController::class);
 
 });
 
 // Routes for Mentor
 Route::middleware(['auth', 'role:mentor'])->group(function () {
+    // Route::resource('mentoring', App\Http\Controllers\MentoringController::class); 
 
 });
 
 // Routes for User
 Route::middleware(['auth', 'role:user'])->group(function () {
+    // Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
+    // Route::get('/schedule/{id}', [ScheduleController::class, 'show'])->name('schedule.show');
+
 
 });
+
+
+// Admin Jadwal Monitoring
+    Route::resource('mentoring', App\Http\Controllers\MentoringController::class);
+
+// User Jadwal Monitoring
+    Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
+    Route::get('/schedule/{id}', [ScheduleController::class, 'show'])->name('schedule.show');
+
+
