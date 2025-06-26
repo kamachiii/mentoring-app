@@ -64,12 +64,31 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link @if (Route::currentRouteName() == 'forum-diskusi') active @endif">
+                <a href="/forum" class="nav-link @if (Route::currentRouteName() == 'forum-diskusi') active @endif">
                   <i class="nav-icon bi bi-chat-left-text"></i>
                   <p>
                     Forum Diskusi
                   </p>
                 </a>
+                <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="halaman1.html" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Admin</p>
+              </a>
+            </li>
+             <li class="nav-item">
+              <a href="halaman2.html" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Mentor</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="halaman2.html" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>User</p>
+              </a>
+            </li>
               </li>
             </ul>
             <!--end::Sidebar Menu-->

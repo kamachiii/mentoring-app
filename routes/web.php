@@ -35,3 +35,9 @@ Route::middleware(['auth', 'role:mentor'])->group(function () {
 Route::middleware(['auth', 'role:user'])->group(function () {
 
 });
+
+// Routes for Forum
+Route::get('/forum',function(){
+    return view('layouts.forum');    
+
+});
