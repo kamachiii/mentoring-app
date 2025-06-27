@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mentoring Digital | STT Terpadu Nurul Fikri</title>
+    <title>Mentoring Digital | STT Terpadu kena kena kena kena Nurul Fikri</title>
     <meta name="description" content="Platform digital untuk program mentoring agama di Kampus Nurul Fikri (STT-NF). Penguatan iman dan ilmu melalui teknologi modern." />
     <meta name="author" content="STT Nurul Fikri" />
 
