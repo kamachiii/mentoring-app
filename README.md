@@ -1,7 +1,7 @@
 ## Kelompok
 
 - Adit
-- Ariq
+- Ariq Jamhari
 - Eka Vitaloka
 - Lalu
 - Muhammad Kamil

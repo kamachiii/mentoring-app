@@ -41,3 +41,8 @@ Route::get('/forum',function(){
     return view('layouts.forum');    
 
 });
+// Routes for Forum
+Route::get('/dashboard',function(){
+    return view('dashboard');    
+
+});
