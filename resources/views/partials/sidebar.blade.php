@@ -12,7 +12,13 @@
             />
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            <span class="brand-text fw-light">MentorLTE</span>
+            @auth
+                <span class="brand-text fw-light">
+                    Haloo - {{ ucfirst(auth()->user()->role) }}
+                </span>
+            @else
+                <span class="brand-text fw-light">Haloo - Guest</span>
+            @endauth
             <!--end::Brand Text-->
           </a>
           <!--end::Brand Link-->
@@ -46,16 +52,36 @@
                   </p>
                 </a>
               </li>
-              @endif
               <li class="nav-item">
-                <a href="#" class="nav-link @if (Route::currentRouteName() == 'jadwal-mentoring') active @endif">
+                <a href="{{route('mentoring.index')}}" class="nav-link @if (Route::currentRouteName() == 'jadwal-mentoring') active @endif">
                   <i class="nav-icon bi bi-calendar-event"></i>
                   <p>
                     Jadwal Mentoring
                   </p>
                 </a>
               </li>
+              @endif
+              @if (Auth::user()->hasRole('mentor'))
               <li class="nav-item">
+                <a href="{{route('mentoring.index')}}" class="nav-link @if (Route::currentRouteName() == 'jadwal-mentoring') active @endif">
+                  <i class="nav-icon bi bi-calendar-event"></i>
+                  <p>
+                    Jadwal Mentoring
+                  </p>
+                </a>
+              </li>
+              @endif
+              @if (Auth::user()->hasRole('user'))
+              <li class="nav-item">
+                <a href="{{route('schedule.index')}}" class="nav-link @if (Route::currentRouteName() == 'jadwal-user') active @endif">
+                  <i class="nav-icon bi bi-calendar-event"></i>
+                  <p>
+                    Jadwal
+                  </p>
+                </a>
+              </li>
+              @endif
+              {{-- <li class="nav-item">
                 <a href="#" class="nav-link @if (Route::currentRouteName() == 'absensi') active @endif">
                   <i class="nav-icon bi bi-journal-check"></i>
                   <p>
@@ -70,26 +96,6 @@
                     Forum Diskusi
                   </p>
                 </a>
-                <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="halaman1.html" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Admin</p>
-              </a>
-            </li>
-             <li class="nav-item">
-              <a href="halaman2.html" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Mentor</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="halaman2.html" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>User</p>
-              </a>
-            </li>
-              </li>
             </ul>
             <!--end::Sidebar Menu-->
           </nav>
