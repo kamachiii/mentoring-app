@@ -44,7 +44,6 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 
 });
 
-
 // Admin Jadwal Monitoring
     Route::resource('mentoring', App\Http\Controllers\MentoringController::class);
 
@@ -52,4 +51,13 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
     Route::get('/schedule/{id}', [ScheduleController::class, 'show'])->name('schedule.show');
 
+// Routes for Forum
+Route::get('/forum',function(){
+    return view('layouts.forum');    
 
+});
+// Routes for Forum
+Route::get('/dashboard',function(){
+    return view('dashboard');    
+
+});

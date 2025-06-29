@@ -90,13 +90,12 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link @if (Route::currentRouteName() == 'forum-diskusi') active @endif">
+                <a href="/forum" class="nav-link @if (Route::currentRouteName() == 'forum-diskusi') active @endif">
                   <i class="nav-icon bi bi-chat-left-text"></i>
                   <p>
                     Forum Diskusi
                   </p>
                 </a>
-              </li> --}}
             </ul>
             <!--end::Sidebar Menu-->
           </nav>
