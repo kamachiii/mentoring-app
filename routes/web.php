@@ -61,3 +61,7 @@ Route::get('/dashboard',function(){
     return view('dashboard');    
 
 });
+
+Route::get('/absensi', function () {
+    return view('absensi');
+});
