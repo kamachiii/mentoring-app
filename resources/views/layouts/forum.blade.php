@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Forum Diskusi</title>
-  <!-- AdminLTE & Bootstrap -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.2/dist/css/adminlte.min.css">
-</head>
-<body class="layout-fixed sidebar-mini">
+@extends('app')
+@section('title', 'Jadwal Mentoring')
+@section('content')
   <div class="wrapper">
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper p-4">
@@ -247,7 +238,7 @@
   <!-- AdminLTE & Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.2/dist/js/adminlte.min.js"></script>
-</body>
-</html>
+
+  @endsection
 
 
