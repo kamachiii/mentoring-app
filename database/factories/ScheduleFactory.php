@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Models\MentoringGroup;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,7 +19,10 @@ class ScheduleFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'mentor_id' => User::factory()->create([
+                'role' => 'mentor',
+            ])->id,
+            'mentoring_group_id' => random_int(1, MentoringGroup::count()),
             'date' => $this->faker->date(),
             'start_time' => $this->faker->time('H:i:s'),
             'end_time' => $this->faker->time('H:i:s'),
