@@ -55,7 +55,7 @@ Route::get('/forum', [App\Http\Controllers\DiscussionController::class, 'index']
 Route::get('/dashboard-progress',function(){
     return view('dashboard');
 
-//});
+});
 
 Route::get('/absensi', function () {
     return view('absensi');
