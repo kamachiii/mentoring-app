@@ -8,14 +8,15 @@
         <h3 class="mb-4">Forum Diskusi</h3>
 
         <!-- Form Diskusi -->
+         @if (auth()->user()->role == 'admin')
         <form id="form-diskusi">
           <div class="mb-3">
             <label for="topik" class="form-label">Topik Diskusi</label>
-            <input type="text" class="form-control" id="Topik" required>
+            <input type="text" class="form-control" id="topik" required>
           </div>
           <button type="submit" class="btn btn-primary">Kirim</button>
         </form>
-
+        
         <hr>
 
         <!-- Tabel Laporan -->
@@ -28,56 +29,30 @@
               <table class="table table-bordered">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Topik Diskusi</th>
-                    <th>Waktu</th>
+                    <th>User</th>
+                    <th>Title</th>
+                    <th>Content</th>
                   </tr>
                 </thead>
                 <tbody id="tabel-laporan">
                   <!-- Isi dari JavaScript -->
+                  @foreach ($discussions as $item)
+                  <tr>
+                    <td>{{ $item->user->name }}</td>
+                    <td>{{ $item->title }}</td>
+                    <td>{{ $item->content }}</td>
+                  </tr>
+                  @endforeach
                 </tbody>
               </table>
             </div>
           </div>
         </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- Script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const form = document.getElementById('form-diskusi');
-      const topikInput = document.getElementById('topik');
-      const laporanTable = document.getElementById('tabel-laporan');
-      let no = 1;
-
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const topik = topikInput.value.trim();
-        const waktu = new Date().toLocaleString();
-        const nama = "Anda"; // Ganti nanti dengan nama login jika perlu
-
-        if (topik) {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${no++}</td>
-            <td>${topik}</td>
-            <td>${waktu}</td>
-          `;
-          laporanTable.prepend(row);
-
-          judulInput.value = '';
-        }
-      });
-    });
-  </script>
+          @endif
 
      <!-- Form Mentor -->
-        <form id="form-diskusi">
-           <form action="proses.php" method="post" class="p-3">
+      @if (auth()->user()->role == 'mentor')
+        <form id="form-diskusi">          
   <div class="form-row">
     <div class="form-group col-md-4">
       <label for="nama">Nama Mentor</label>
@@ -94,7 +69,6 @@
   </div>
   <button type="submit" class="btn btn-primary">Kirim</button>
 </form>
-
         <hr>
 
         <!-- Tabel Laporan -->
@@ -121,43 +95,10 @@
             </div>
           </div>
         </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- Script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const form = document.getElementById('form-diskusi');
-      const topikInput = document.getElementById('topik');
-      const laporanTable = document.getElementById('tabel-laporan');
-      let no = 1;
-
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const topik = topikInput.value.trim();
-        const waktu = new Date().toLocaleString();
-        const nama = "Anda"; // Ganti nanti dengan nama login jika perlu
-
-        if (topik) {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${no++}</td>
-            <td>${topik}</td>
-            <td>${waktu}</td>
-          `;
-          laporanTable.prepend(row);
-
-          judulInput.value = '';
-        }
-      });
-    });
-  </script>
-
+        @endif 
 
  <!-- Form User -->
+  @if (auth()->user()->role == 'user') 
         <form id="form-diskusi">
          <div class="form-group col-md-4">
       <label for="nama">Nama User</label>
@@ -173,6 +114,7 @@
   </div>
           <button type="submit" class="btn btn-primary">Kirim</button>
         </form>
+     
 
         <hr>
 
@@ -200,40 +142,12 @@
             </div>
           </div>
         </div>
+           @endif 
 
       </div>
     </div>
   </div>
-
-  <!-- Script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const form = document.getElementById('form-diskusi');
-      const topikInput = document.getElementById('topik');
-      const laporanTable = document.getElementById('tabel-laporan');
-      let no = 1;
-
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const topik = topikInput.value.trim();
-        const waktu = new Date().toLocaleString();
-        const nama = "Anda"; // Ganti nanti dengan nama login jika perlu
-
-        if (topik) {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${no++}</td>
-            <td>${topik}</td>
-            <td>${waktu}</td>
-          `;
-          laporanTable.prepend(row);
-
-          judulInput.value = '';
-        }
-      });
-    });
-  </script>
+ 
 
   <!-- AdminLTE & Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

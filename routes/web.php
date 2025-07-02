@@ -52,15 +52,12 @@ Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/schedule/{id}', [ScheduleController::class, 'show'])->name('schedule.show');
 
 // Routes for Forum
-Route::get('/forum',function(){
-    return view('layouts.forum');    
-
-});
+Route::get('/forum', [App\Http\Controllers\DiscussionController::class, 'index'])->name('forum.index');
 // Routes for Forum
-Route::get('/dashboard',function(){
-    return view('dashboard');    
+//Route::get('/dashboard',function(){
+   // return view('dashboard');    
 
-});
+//});
 
 Route::get('/absensi', function () {
     return view('absensi');
