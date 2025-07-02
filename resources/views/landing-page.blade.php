@@ -42,8 +42,13 @@
 
                 <!-- Auth Buttons -->
                 <div class="auth-buttons">
+                    @auth
+                    <a href="{{ route('dashboard') }}" class="btn-ghost" style="text-decoration: none;">Dashboard</a>
+                    {{-- <button class="btn-primary">Daftar</button> --}}
+                    @else
                     <a href="{{ route('login') }}" class="btn-ghost" style="text-decoration: none;">Login</a>
                     {{-- <button class="btn-primary">Daftar</button> --}}
+                    @endauth
                 </div>
 
                 <!-- Mobile Menu Button -->

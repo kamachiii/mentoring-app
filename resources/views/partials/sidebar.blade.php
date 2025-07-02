@@ -45,7 +45,7 @@
               {{-- Admin Sidebar --}}
               @if (Auth::user()->hasRole('admin'))
               <li class="nav-item">
-                <a href="#" class="nav-link @if (Route::currentRouteName() == 'managemen-pengguna') active @endif">
+                <a href="{{ route('user.index') }}" class="nav-link @if (Route::currentRouteName() == 'managemen-pengguna') active @endif">
                   <i class="nav-icon bi bi-people"></i>
                   <p>
                     Managemen Pengguna
@@ -81,7 +81,7 @@
                 </a>
               </li>
               @endif
-              {{-- <li class="nav-item">
+              <li class="nav-item">
                 <a href="#" class="nav-link @if (Route::currentRouteName() == 'absensi') active @endif">
                   <i class="nav-icon bi bi-journal-check"></i>
                   <p>
