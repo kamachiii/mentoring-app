@@ -82,7 +82,7 @@
               </li>
               @endif
               <li class="nav-item">
-                <a href="#" class="nav-link @if (Route::currentRouteName() == 'absensi') active @endif">
+                <a href="/presensi" class="nav-link @if (Route::currentRouteName() == 'presensi') active @endif">
                   <i class="nav-icon bi bi-journal-check"></i>
                   <p>
                     Absensi
