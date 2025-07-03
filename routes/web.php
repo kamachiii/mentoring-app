@@ -51,6 +51,7 @@ Route::middleware(['auth', 'role:user'])->group(function () {
 
 // Routes for Forum
 Route::get('/forum', [App\Http\Controllers\DiscussionController::class, 'index'])->name('forum.index');
+Route::post('/forum', [App\Http\Controllers\DiscussionController::class, 'store'])->name('forum.store');
 // Routes for Forum
 Route::get('/dashboard-progress',function(){
     return view('dashboard');
