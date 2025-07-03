@@ -5,7 +5,7 @@
 - Eka Vitaloka
 - Lalu
 - Muhammad Kamil
-- Zaid
+- Zaid Asy Syuhada
 
 ## Requirements
 
