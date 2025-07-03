@@ -20,10 +20,10 @@ class UserController extends Controller
     {
         try {
             $validate = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users',
-                'password' => 'required|string|min:8',
-                'role' => 'required|in:admin,mentor,user',
+                'name'            => 'required|string|max:255',
+                'email'           => 'required|string|email|max:255|unique:users',
+                'password'        => 'required|string|min:8',
+                'role'            => 'required|in:admin,mentor,user',
                 'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -32,13 +32,17 @@ class UserController extends Controller
             return redirect()->back()->withInput();
         }
         $validate['password'] = bcrypt($validate['password']);
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'role' => $request->role,
+        $createUser = User::create([
+            'name'            => $request->name,
+            'email'           => $request->email,
+            'password'        => bcrypt($request->password),
+            'role'            => $request->role,
             'profile_picture' => $request->file('profile_picture') ? $request->file('profile_picture')->store('profile_pictures', 'public') : null,
         ]);
+        if (!$createUser) {
+            Alert::error('Error', 'Failed to create user.');
+            return redirect()->back();
+        }
 
         Alert::success('Success', 'User created successfully.');
         return redirect()->route('user.index');
@@ -49,10 +53,10 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
             $validate = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-                'password' => 'nullable|string|min:8',
-                'role' => 'required|in:admin,mentor,user',
+                'name'            => 'required|string|max:255',
+                'email'           => 'required|string|email|max:255|unique:users,email,' . $id,
+                'password'        => 'nullable|string|min:8',
+                'role'            => 'required|in:admin,mentor,user',
                 'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
             if ($request->hasFile('profile_picture')) {

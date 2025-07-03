@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\MentoringController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\MentoringController;
+use App\Http\Controllers\MentoringGroupController;
 
 Route::get('/', function () {
     return view('landing-page');
@@ -12,7 +13,6 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
-
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
@@ -24,30 +24,20 @@ Route::middleware('guest')->group(function () {
 });
 
 // Routes for Admin
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::resource('mentoring', MentoringController::class);
+Route::middleware(['role:admin'])->group(function () {
     Route::resource('user', UserController::class);
-
+    Route::resource('mentoring-group', MentoringGroupController::class);
 });
 
 // Routes for Mentor
-Route::middleware(['auth', 'role:mentor'])->group(function () {
+Route::middleware(['role:admin,mentor'])->group(function () {
     Route::resource('mentoring', MentoringController::class);
-
+    Route::resource('schedule', ScheduleController::class);
 });
 
 // Routes for User
-Route::middleware(['auth', 'role:user'])->group(function () {
-    Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
-    Route::get('/schedule/{id}', [ScheduleController::class, 'show'])->name('schedule.show');
+Route::middleware(['role:user'])->group(function () {
 });
-
-// Admin Jadwal Monitoring
-    Route::resource('mentoring', MentoringController::class);
-
-// User Jadwal Monitoring
-    Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
-    Route::get('/schedule/{id}', [ScheduleController::class, 'show'])->name('schedule.show');
 
 // Routes for Forum
 Route::get('/forum', [App\Http\Controllers\DiscussionController::class, 'index'])->name('forum.index');
@@ -55,7 +45,6 @@ Route::post('/forum', [App\Http\Controllers\DiscussionController::class, 'store'
 // Routes for Forum
 Route::get('/dashboard-progress',function(){
     return view('dashboard');
-
 });
 
 Route::get('/absensi', function () {

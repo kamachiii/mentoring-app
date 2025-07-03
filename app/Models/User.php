@@ -22,7 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'profile_picture'
+        'profile_picture',
+        'mentoring_group_id'
     ];
 
     /**
@@ -66,6 +67,11 @@ class User extends Authenticatable
     public function schedules()
     {
         return $this->hasMany(Schedule::class, 'users_id');
+    }
+
+    public function mentoringGroup()
+    {
+        return $this->belongsTo(MentoringGroup::class, 'mentoring_group_id', 'id');
     }
 
     public function hasRole(string $role): bool

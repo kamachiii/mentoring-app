@@ -24,6 +24,7 @@ class ScheduleFactory extends Factory
             ])->id,
             'mentoring_group_id' => random_int(1, MentoringGroup::count()),
             'date' => $this->faker->date(),
+            'location' => $this->faker->city(),
             'start_time' => $this->faker->time('H:i:s'),
             'end_time' => $this->faker->time('H:i:s'),
             'topic' => $this->faker->sentence(3),

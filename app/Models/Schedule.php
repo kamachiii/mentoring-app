@@ -11,8 +11,10 @@ class Schedule extends Model
     use HasFactory;
 
     protected $fillable = [
-        'users_id',
+        'mentor_id',
+        'mentoring_group_id',
         'date',
+        'location',
         'start_time',
         'end_time',
         'topic',
@@ -21,11 +23,16 @@ class Schedule extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'users_id');
+        return $this->belongsTo(User::class, 'mentor_id', 'id');
     }
-    
+
     public function presences()
     {
         return $this->hasMany(Presence::class);
+    }
+
+    public function mentoringGroup()
+    {
+        return $this->belongsTo(MentoringGroup::class, 'mentoring_group_id', 'id');
     }
 }
