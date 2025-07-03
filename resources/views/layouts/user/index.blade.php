@@ -4,7 +4,9 @@
 <div class="card">
     <div class="card-header row">
         <div class="col-6 align-self-center card-title">
-            User Management
+            <h3 class="card-title">
+                <i class="bi bi-people me-2"></i>Managemen Pengguna
+            </h3>
         </div>
         <div class="col-6 align-self-center text-end">
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">Tambah User</button>
@@ -41,7 +43,7 @@
                         </button>
                        <a href="{{ route('user.destroy', $user->id) }}"
                             class="btn btn-danger btn-sm"
-                            data-confirm-delete="Yakin ingin menghapus user ini?">
+                            data-confirm-delete>
                             Hapus
                         </a>
                     </td>
@@ -51,7 +53,7 @@
             <tfoot>
                 <tr>
                     <th colspan="5" class="text-center">
-                            {!! $users->links('pagination::bootstrap-5') !!}
+                        {!! $users->links('pagination::bootstrap-5') !!}
                     </th>
                 </tr>
             </tfoot>

@@ -11,7 +11,10 @@ class Schedule extends Model
 
     protected $fillable = [
         'user_id',
+        'mentor_id',
+        'mentoring_group_id',
         'date',
+        'location',
         'start_time',
         'end_time',
         'topic',
@@ -22,8 +25,9 @@ class Schedule extends Model
     {
         
         return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'mentor_id', 'id');
     }
-    
+
     public function presences()
     {
         return $this->hasMany(Presence::class);

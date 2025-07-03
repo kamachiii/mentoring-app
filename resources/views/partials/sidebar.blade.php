@@ -12,13 +12,9 @@
             />
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            @auth
-                <span class="brand-text fw-light">
-                    Haloo - {{ ucfirst(auth()->user()->role) }}
-                </span>
-            @else
-                <span class="brand-text fw-light">Haloo - Guest</span>
-            @endauth
+              <span class="brand-text fw-light">
+                  Mentoring App
+              </span>
             <!--end::Brand Text-->
           </a>
           <!--end::Brand Link-->
@@ -45,7 +41,7 @@
               {{-- Admin Sidebar --}}
               @if (Auth::user()->hasRole('admin'))
               <li class="nav-item">
-                <a href="{{ route('user.index') }}" class="nav-link @if (Route::currentRouteName() == 'managemen-pengguna') active @endif">
+                <a href="{{ route('user.index') }}" class="nav-link @if (Route::currentRouteName() == 'user.index') active @endif">
                   <i class="nav-icon bi bi-people"></i>
                   <p>
                     Managemen Pengguna
@@ -53,34 +49,22 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="{{route('mentoring.index')}}" class="nav-link @if (Route::currentRouteName() == 'jadwal-mentoring') active @endif">
+                <a href="{{ route('mentoring-group.index') }}" class="nav-link @if (Route::currentRouteName() == 'mentoring-group.index') active @endif">
+                  <i class="nav-icon bi bi-clipboard-data"></i>
+                  <p>
+                    Grup Mentoring
+                  </p>
+                </a>
+              </li>
+              @endif
+              <li class="nav-item">
+                <a href="{{route('schedule.index')}}" class="nav-link @if (Route::currentRouteName() == 'schedule.index') active @endif">
                   <i class="nav-icon bi bi-calendar-event"></i>
                   <p>
                     Jadwal Mentoring
                   </p>
                 </a>
               </li>
-              @endif
-              @if (Auth::user()->hasRole('mentor'))
-              <li class="nav-item">
-                <a href="{{route('mentoring.index')}}" class="nav-link @if (Route::currentRouteName() == 'jadwal-mentoring') active @endif">
-                  <i class="nav-icon bi bi-calendar-event"></i>
-                  <p>
-                    Jadwal Mentoring
-                  </p>
-                </a>
-              </li>
-              @endif
-              @if (Auth::user()->hasRole('user'))
-              <li class="nav-item">
-                <a href="{{route('schedule.index')}}" class="nav-link @if (Route::currentRouteName() == 'jadwal-user') active @endif">
-                  <i class="nav-icon bi bi-calendar-event"></i>
-                  <p>
-                    Jadwal
-                  </p>
-                </a>
-              </li>
-              @endif
               <li class="nav-item">
                 <a href="/presensi" class="nav-link @if (Route::currentRouteName() == 'presensi') active @endif">
                   <i class="nav-icon bi bi-journal-check"></i>

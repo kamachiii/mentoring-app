@@ -20,6 +20,7 @@ class ScheduleFactory extends Factory
         return [
             'user_id' => User::factory(),
             'date' => $this->faker->date(),
+            'location' => $this->faker->city(),
             'start_time' => $this->faker->time('H:i:s'),
             'end_time' => $this->faker->time('H:i:s'),
             'topic' => $this->faker->sentence(3),

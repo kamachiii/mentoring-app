@@ -9,13 +9,17 @@
 
         <!-- Form Diskusi -->
          @if (auth()->user()->role == 'admin')
-        <form id="form-diskusi">
+        <form method="post" action="{{ route('forum.store') }}" id="form-diskusi">
           <div class="mb-3">
-            <label for="topik" class="form-label">Topik Diskusi</label>
-            <input type="text" class="form-control" id="topik" required>
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" required name="title">
+            <label for="topik" class="form-label">Content</label>
+            <input type="text" class="form-control" id="content" required name="content">
           </div>
           <button type="submit" class="btn btn-primary">Kirim</button>
+          @csrf
         </form>
+       
         
         <hr>
 
@@ -44,6 +48,13 @@
                   </tr>
                   @endforeach
                 </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="3" class="text-center">Total Diskusi: {{ $discussions->count() }}</td>
+                  </tr>
+                </tfoot>
+
+                {!! $discussions->links('pagination::bootstrap-5') !!}
               </table>
             </div>
           </div>

@@ -21,8 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'profile_picture',
-        'role' // [UBAH/TAMBAH] Tambahkan 'role' di sini
+        'role',
+        'profile_picture'
     ];
 
     /**
@@ -69,6 +69,11 @@ class User extends Authenticatable
     {
         
         return $this->hasMany(Schedule::class, 'user_id');
+    }
+
+    public function mentoringGroup()
+    {
+        return $this->belongsTo(MentoringGroup::class, 'mentoring_group_id', 'id');
     }
 
     public function hasRole(string $role): bool

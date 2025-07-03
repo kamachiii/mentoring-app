@@ -1,10 +1,12 @@
 <?php
 
-use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\MentoringController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PresenceController; // Import PresenceController
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\MentoringController;
+use App\Http\Controllers\MentoringGroupController;
 
 Route::get('/', function () {
     return view('landing-page');
@@ -13,6 +15,7 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard'); // Ini yang benar
     Route::get('/user/dashboard', [AuthController::class, 'dashboard'])->name('user.index'); // Atau nama controller/metode lain yang sesuai
+    Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
@@ -48,6 +51,25 @@ Route::resource('mentoring', App\Http\Controllers\MentoringController::class);
 // User Jadwal Monitoring
 Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule.index');
 Route::get('/schedule/{id}', [ScheduleController::class, 'show'])->name('schedule.show');
+
+// Routes for Forum
+Route::get('/forum',function(){
+    return view('layouts.forum');
+    });
+Route::middleware(['role:admin'])->group(function () {
+    Route::resource('user', UserController::class);
+    Route::resource('mentoring-group', MentoringGroupController::class);
+});
+
+// Routes for Mentor
+Route::middleware(['role:admin,mentor'])->group(function () {
+    Route::resource('mentoring', MentoringController::class);
+    Route::resource('schedule', ScheduleController::class);
+});
+
+// Routes for User
+Route::middleware(['role:user'])->group(function () {
+});
 
 // Routes for Forum
 Route::get('/forum',function(){
