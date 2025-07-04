@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Schedule;
 use Illuminate\Http\Request;
+use App\Models\MentoringGroup;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class ScheduleController extends Controller
@@ -13,9 +14,10 @@ class ScheduleController extends Controller
     {
         $schedules = Schedule::latest()->paginate(5);
         $users = User::where('role', 'mentor')->get();
+        $mentoringGroups = MentoringGroup::all();
 
         confirmDelete('Delete','Are you sure you want to delete this schedule?');
-        return view('layouts.schedule.index', compact('schedules', 'users'));
+        return view('layouts.schedule.index', compact('schedules', 'users', 'mentoringGroups'));
     }
 
 
@@ -24,7 +26,7 @@ class ScheduleController extends Controller
         try {
             $validate = $request->validate([
                 'mentor_id'          => 'required|exists:users,id',
-                'mentoring_group_id' => 'exists:mentoring_groups,id',
+                'mentoring_group_id' => 'nullable|exists:mentoring_group,id',
                 'date'               => 'required|date',
                 'location'           => 'required|string|max:255',
                 'start_time'         => 'required',
@@ -54,7 +56,7 @@ class ScheduleController extends Controller
             $schedule = Schedule::findOrFail($id);
             $validate = $request->validate([
                 'mentor_id'          => 'required|exists:users,id',
-                'mentoring_group_id' => 'exists:mentoring_groups,id',
+                'mentoring_group_id' => 'nullable|exists:mentoring_group,id',
                 'date'               => 'required|date',
                 'location'           => 'required|string|max:255',
                 'start_time'         => 'required',

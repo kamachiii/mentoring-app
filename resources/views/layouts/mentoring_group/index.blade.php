@@ -1,11 +1,11 @@
 @extends('app')
-@section('title', 'Jadwal Mentoring')
+@section('title', 'Grup Mentoring')
 @section('content')
 <div class="card">
     <div class="card-header row">
         <div class="col-6 align-self-center card-title">
             <h3 class="card-title">
-                <i class="bi bi-calendar-event me-2"></i>Jadwal Mentoring
+                <i class="bi bi-calendar-event me-2"></i>Grup Mentoring
             </h3>
         </div>
         <div class="col-6 align-self-center text-end">
@@ -18,7 +18,7 @@
             <tr>
                 <th style="width: 10px">#</th>
                 <th>Nama Mentoring Group</th>
-                <th class="text-center" style="width: 200px">Aksi</th>
+                <th class="text-center" style="width: 250px">Aksi</th>
             </tr>
             </thead>
             <tbody>
@@ -29,8 +29,15 @@
                 <td class="text-center">
                     <button class="btn btn-info btn-sm view-btn"
                         data-name="{{ $group->name }}"
+                        data-anggota="{{ $group->users->pluck('name')->implode(', ') }}"
                         data-bs-toggle="modal" data-bs-target="#viewMentoringGroupModal">
                         Lihat
+                    </button>
+                    <button class="btn btn-success btn-sm add-member-btn"
+                        data-id="{{ $group->id }}"
+                        data-name="{{ $group->name }}"
+                        data-bs-toggle="modal" data-bs-target="#addMemberToGroupModal">
+                        Tambah
                     </button>
                     <button class="btn btn-warning btn-sm edit-btn"
                         data-id="{{ $group->id }}"
@@ -60,7 +67,7 @@
 
 <!-- Modal lihat detail Mentoring Group -->
 <div class="modal fade" id="viewMentoringGroupModal" tabindex="-1" aria-labelledby="viewMentoringGroupModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content shadow-lg">
             <div class="modal-header bg-info text-dark">
                 <h5 class="modal-title" id="viewMentoringGroupModalLabel">
@@ -73,6 +80,10 @@
                     <div class="col-4 fw-semibold text-dark">Nama Group</div>
                     <div class="col-8 text-end" id="view_group_name"></div>
                 </div>
+                <div class="row mb-2">
+                    <div class="col-4 fw-semibold text-dark">List Anggota</div>
+                    <div class="col-8 text-end" id="view_anggota"></div>
+                </div>
             </div>
             <div class="modal-footer bg-light">
                 <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
@@ -80,6 +91,47 @@
                 </button>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Modal: Tambah Anggota -->
+<div class="modal fade" id="addMemberToGroupModal" tabindex="-1" aria-labelledby="addMemberToGroupModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <form id="addMemberForm" action="{{ route('mentoringGroup.storeMember') }}" method="POST" autocomplete="off">
+            @csrf
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="addMemberToGroupModalLabel">
+                        <i class="bi bi-person-plus me-2"></i>Tambah Anggota Grup Mentoring
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 py-3">
+                    <input type="hidden" id="group_id" name="group_id">
+                    <div class="mb-3">
+                        <label for="group_name_display" class="form-label fw-semibold">Nama Grup</label>
+                        <input type="text" class="form-control" id="group_name_display" readonly disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="user_id" class="form-label fw-semibold">Pilih Anggota <span class="text-danger">*</span></label>
+                        <select class="form-select" id="user_id" name="user_id" required>
+                            <option value="">-- Pilih Pengguna --</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->role }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Batal
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save"></i> Simpan
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -156,8 +208,31 @@
             viewMentoringGroupModal.addEventListener('show.bs.modal', function (event) {
                 var button = event.relatedTarget;
                 var groupName = button.getAttribute('data-name');
+                var anggotaList = button.getAttribute('data-anggota') || 'Tidak ada anggota';
                 var viewGroupName = viewMentoringGroupModal.querySelector('#view_group_name');
+                var viewAnggota = viewMentoringGroupModal.querySelector('#view_anggota');
                 viewGroupName.textContent = groupName;
+                viewAnggota.textContent = anggotaList;
+            });
+        }
+
+        // --- Logic for "Add Member" Modal ---
+        const addMemberModal = document.getElementById('addMemberToGroupModal');
+        if (addMemberModal) {
+            addMemberModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const groupId = button.getAttribute('data-id');
+                const groupName = button.getAttribute('data-name');
+
+                const groupIdInput = addMemberModal.querySelector('#group_id');
+                const groupNameDisplay = addMemberModal.querySelector('#group_name_display');
+
+                groupIdInput.value = groupId;
+                groupNameDisplay.value = groupName;
+
+                // Reset select fields
+                addMemberModal.querySelector('#user_id').selectedIndex = 0;
+                addMemberModal.querySelector('#role').selectedIndex = 0;
             });
         }
 

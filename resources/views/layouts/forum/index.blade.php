@@ -1,179 +1,249 @@
 @extends('app')
-@section('title', 'Jadwal Mentoring')
+@section('title', 'Forum Diskusi')
 @section('content')
-<div class="card">
-    <div class="card-header row">
-        <div class="col-6 align-self-center card-title">
-            <h3 class="card-title">
-                <i class="bi bi-calendar-event me-2"></i>Jadwal Mentoring
-            </h3>
+<div class="container py-2">
+    <!-- Fitur Pencarian dan Sortir -->
+    <div class="row mb-4">
+        @if (Auth::user()->role == 'admin' || Auth::user()->role == 'mentor')
+        <div class="col-md-10">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Cari topik diskusi...">
+                <button class="btn btn-primary" type="button"><i class="bi bi-search"></i></button>
+            </div>
         </div>
-        <div class="col-6 align-self-center text-end">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMentoringGroupModal">Tambah Jadwal</button>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addDiscussionModal">
+                <i class="bi bi-plus-circle me-1"></i> Tambah Diskusi
+            </button>
         </div>
+        @endif
     </div>
-    <div class="card-body">
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th style="width: 10px">#</th>
-                <th>Nama Mentoring Group</th>
-                <th class="text-center" style="width: 200px">Aksi</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($groups as $group)
-            <tr>
-                <td>{{ ($groups->currentPage() - 1) * $groups->perPage() + $loop->iteration }}</td>
-                <td>{{ $group->name }}</td>
-                <td class="text-center">
-                    <button class="btn btn-info btn-sm view-btn"
-                        data-name="{{ $group->name }}"
-                        data-bs-toggle="modal" data-bs-target="#viewMentoringGroupModal">
-                        Lihat
-                    </button>
-                    <button class="btn btn-warning btn-sm edit-btn"
-                        data-id="{{ $group->id }}"
-                        data-name="{{ $group->name }}"
-                        data-bs-toggle="modal" data-bs-target="#editMentoringGroupModal">
-                        Edit
-                    </button>
-                    <a href="{{ route('mentoring-group.destroy', $group->id) }}"
-                        class="btn btn-danger btn-sm delete-btn"
-                        data-confirm-delete>
-                        Hapus
+
+    @foreach ($discussions as $discussion)
+    <div class="card shadow-sm mb-4 discussion-card" style="cursor: pointer;" data-href="forum/{{ $discussion->id }}">
+        <div class="card-header bg-white border-bottom">
+            <!-- User Block -->
+            <div class="d-flex align-items-center">
+                <img class="rounded-circle" src="https://placehold.co/40x40/{{ $discussion->user->role == 'admin' ? '0d6efd' : '198754' }}/ffffff?text={{ Str::substr($discussion->user->name, 0, 1) }}" alt="User Image">
+                <div class="ms-3">
+                    <a href="#" class="text-dark text-decoration-none fw-bold">{{ $discussion->user->name }}</a>
+                    <div class="text-muted small">Diposting pada - {{ $discussion->created_at->diffForHumans() }}</div>
+                </div>
+
+                @if (Auth::user()->id == $discussion->user_id)
+                <!-- Dropdown Edit/Hapus Diskusi -->
+                <div class="ms-auto">
+                    <div class="dropdown">
+                        <a href="#" class="text-muted text-decoration-none" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <button class="dropdown-item btn btn-transparent btn-sm"
+                                        data-id="{{ $discussion->id }}"
+                                        data-title="{{ $discussion->title }}"
+                                        data-content="{{ $discussion->content }}"
+                                        data-bs-toggle="modal" data-bs-target="#editMentoringGroupModal">
+                                    <i class="bi bi-pencil-square me-2"></i>Edit
+                                </button>
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{{ route('forum.destroy', $discussion->id) }}"
+                                    data-confirm-delete>
+                                    <i class="bi bi-trash me-2"></i>Hapus
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                @endif
+            </div>
+        </div>
+        <div class="card-body">
+            <h4>{{ $discussion->title }}</h4>
+            <p>{{ $discussion->content }}</p>
+
+            <!-- Tombol Aksi dengan Bootstrap Icons -->
+            <div class="d-flex small text-muted">
+                <a href="#" class="text-muted text-decoration-none me-3 share-btn"><i class="bi bi-share me-1"></i> Bagikan</a>
+                <a class="text-muted text-decoration-none ms-auto" data-bs-toggle="collapse" href="#collapseReplyForm{{ $discussion->id }}" role="button" aria-expanded="false" aria-controls="collapseReplyForm{{ $discussion->id }}">
+                    <i class="bi bi-reply-fill me-1"></i> Balas
+                </a>
+            </div>
+        </div>
+
+        <!-- Bagian Komentar/Balasan (Collapsible) -->
+        <div class="card-footer bg-white border-top">
+            <a class="text-decoration-none text-dark d-block" data-bs-toggle="collapse" href="#collapseAnswers{{ $discussion->id }}" role="button" aria-expanded="false" aria-controls="collapseAnswers{{ $discussion->id }}">
+                <h5 class="mb-0">Jawaban ({{ $discussion->comments->count() }})</h5>
+            </a>
+
+            <div class="collapse pt-3" id="collapseAnswers{{ $discussion->id }}">
+                @foreach ($discussion->comments->sortByDesc('created_at')->take(2) as $comment)
+                <div class="d-flex mb-3">
+                    <img class="rounded-circle" src="https://placehold.co/40x40/{{ $comment->user->role == 'admin' ? '0d6efd' : ($comment->user->role == 'mentor' ? '198754' : '6c757d') }}/ffffff?text={{ Str::substr($comment->user->name, 0, 1) }}" alt="User Image" style="width: 40px; height: 40px;">
+                    <div class="ms-3 flex-grow-1">
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-bold">{{ $comment->user->name }}</span>
+                            <span class="text-muted small">{{ $comment->created_at->diffForHumans() }}</span>
+                        </div>
+                        {{ $comment->content }}
+                    </div>
+                </div>
+                @endforeach
+
+                @if($discussion->comments->count() > 2)
+                <div class="mt-3 text-center">
+                    <a href="{{ route('forum.show', $discussion->id) }}" class="btn btn-outline-primary btn-sm rounded-pill">
+                        <i class="bi bi-eye me-1"></i> Lihat semua komentar
                     </a>
-                </td>
-            </tr>
-            @endforeach
-            </tbody>
-            <tfoot>
-            <tr>
-                <th colspan="3" class="text-center">
-                {!! $groups->links('pagination::bootstrap-5') !!}
-                </th>
-            </tr>
-            </tfoot>
-        </table>
-    </div>
-</div>
-
-<!-- Modal lihat detail Mentoring Group -->
-<div class="modal fade" id="viewMentoringGroupModal" tabindex="-1" aria-labelledby="viewMentoringGroupModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content shadow-lg">
-            <div class="modal-header bg-info text-dark">
-                <h5 class="modal-title" id="viewMentoringGroupModalLabel">
-                    <i class="bi bi-people me-2"></i>Detail Mentoring Group
-                </h5>
-                <button type="button" class="btn-close btn-close-dark" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                @endif
             </div>
-            <div class="modal-body px-4 py-3">
-                <div class="row mb-2">
-                    <div class="col-4 fw-semibold text-dark">Nama Group</div>
-                    <div class="col-8 text-end" id="view_group_name"></div>
+        </div>
+
+
+        <!-- Form untuk Menulis Balasan (Collapsible) -->
+        <div class="card-footer bg-white border-top pt-0">
+            <div class="collapse" id="collapseReplyForm{{ $discussion->id }}">
+                <div class="d-flex align-items-start pt-3">
+                    <img class="rounded-circle" src="https://placehold.co/40x40/{{ Auth::user()->role == 'admin' ? '0d6efd' : (Auth::user()->role == 'mentor' ? '198754' : '6c757d') }}/ffffff?text={{ Str::substr(Auth::user()->name, 0, 1) }}" alt="Your Avatar" style="width: 40px; height: 40px;">
+                    <form action="{{ route('forum.storeComment') }}" method="POST" class="ms-3 flex-grow-1">
+                        @csrf
+                        <input type="text" name="discussion_id" value="{{ $discussion->id }}" hidden>
+                        <textarea class="form-control form-control-sm" name="content" placeholder="Ketik balasan Anda di sini..."></textarea>
+                        <button type="submit" class="btn btn-primary btn-sm mt-2 float-end">Kirim Balasan</button>
+                    </form>
                 </div>
             </div>
-            <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle"></i> Tutup
-                </button>
+        </div>
+    </div>
+    @endforeach
+
+    <!-- Komponen Paginasi -->
+    <div class="d-flex justify-content-center">
+        {{ $discussions->links('pagination::bootstrap-4') }}
+    </div>
+
+</div>
+
+<!-- Modal untuk Tambah Diskusi -->
+<div class="modal fade" id="addDiscussionModal" tabindex="-1" aria-labelledby="addDiscussionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addDiscussionModalLabel">Tambah Diskusi Baru</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <form action="{{ route('forum.store') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="discussionTitle" class="form-label">Judul</label>
+                        <input type="text" class="form-control" id="discussionTitle" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="discussionContent" class="form-label">Konten</label>
+                        <textarea class="form-control" id="discussionContent" name="content" rows="5" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!-- Modal Tambah Mentoring Group -->
-<div class="modal fade" id="addMentoringGroupModal" tabindex="-1" aria-labelledby="addMentoringGroupModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form action="{{ route('mentoring-group.store') }}" method="POST" autocomplete="off">
-            @csrf
-            <div class="modal-content shadow-lg">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="addMentoringGroupModalLabel">
-                        <i class="bi bi-people me-2"></i>Tambah Mentoring Group
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body px-4 py-3">
-                    <div class="mb-3">
-                        <label for="name" class="form-label fw-semibold">Nama Group <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="name" name="name" required maxlength="255" placeholder="Masukkan nama group">
-                    </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle"></i> Batal
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-save"></i> Simpan
-                    </button>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Modal Edit Mentoring Group -->
 <div class="modal fade" id="editMentoringGroupModal" tabindex="-1" aria-labelledby="editMentoringGroupModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form id="editMentoringGroupForm" method="POST" autocomplete="off">
-            @csrf
-            @method('PUT')
-            <div class="modal-content shadow-lg">
-                <div class="modal-header bg-warning text-white">
-                    <h5 class="modal-title" id="editMentoringGroupModalLabel">
-                        <i class="bi bi-pencil-square me-2"></i>Edit Mentoring Group
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body px-4 py-3">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editMentoringGroupModalLabel">Edit Diskusi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('forum.update', 0) }}" id="editDiscussionForm" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
                     <div class="mb-3">
-                        <label for="edit_group_name" class="form-label fw-semibold">Nama Group <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="edit_group_name" name="name" required maxlength="255" placeholder="Masukkan nama group">
+                        <label for="editDiscussionTitle" class="form-label">Judul</label>
+                        <input type="text" class="form-control" id="editDiscussionTitle" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDiscussionContent" class="form-label">Konten</label>
+                        <textarea class="form-control" id="editDiscussionContent" name="content" rows="5" required></textarea>
                     </div>
                 </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle"></i> Batal
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-save"></i> Update
-                    </button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 @endsection
 
 @section('scripts')
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // View Mentoring Group Modal
-        var viewMentoringGroupModal = document.getElementById('viewMentoringGroupModal');
-        if (viewMentoringGroupModal) {
-            viewMentoringGroupModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                var groupName = button.getAttribute('data-name');
-                var viewGroupName = viewMentoringGroupModal.querySelector('#view_group_name');
-                viewGroupName.textContent = groupName;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Setup for Edit Discussion Modal
+        const editModal = document.getElementById('editMentoringGroupModal');
+        if (editModal) {
+            editModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const discussionId = button.getAttribute('data-id');
+                const discussionTitle = button.getAttribute('data-title');
+                const discussionContent = button.getAttribute('data-content');
+
+                // Update form action with the correct discussion ID
+                const formAction = "{{ route('forum.update', ':id') }}".replace(':id', discussionId);
+                document.getElementById('editDiscussionForm').action = formAction;
+
+                // Populate form fields
+                document.getElementById('editDiscussionTitle').value = discussionTitle;
+                document.getElementById('editDiscussionContent').value = discussionContent;
             });
         }
 
-        // Edit Mentoring Group Modal
-        var editMentoringGroupModal = document.getElementById('editMentoringGroupModal');
-        var editMentoringGroupForm = document.getElementById('editMentoringGroupForm');
-        var editGroupNameInput = document.getElementById('edit_group_name');
+        // Setup for Discussion Card navigation
+        const discussionCards = document.querySelectorAll('.discussion-card');
+        discussionCards.forEach(card => {
+            card.addEventListener('click', function(event) {
+                // Jangan navigasi jika pengguna mengklik link, tombol, atau elemen interaktif lainnya
+                if (event.target.closest('a, button, textarea, [data-bs-toggle="collapse"], [data-bs-toggle="dropdown"]')) {
+                    return;
+                }
 
-        document.querySelectorAll('.edit-btn').forEach(function(button) {
-            button.addEventListener('click', function () {
-                var id = this.getAttribute('data-id');
-                var name = this.getAttribute('data-name');
-                editMentoringGroupForm.action = '/mentoring-group/' + id;
-                editGroupNameInput.value = name;
+                // Navigasi ke link yang ditentukan di atribut data-href
+                const link = this.dataset.href;
+                if (link) {
+                    window.location.href = link;
+                }
             });
         });
+
+        // Script untuk tombol bagikan (copy link)
+            const shareButtons = document.querySelectorAll('.share-btn');
+            shareButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const card = this.closest('.discussion-card');
+                    const detailUrl = new URL(card.dataset.href, window.location.href).href;
+
+                    navigator.clipboard.writeText(detailUrl).then(() => {
+                        const originalContent = this.innerHTML;
+                        this.innerHTML = `<i class="bi bi-check-lg me-1"></i> Tersalin!`;
+                        setTimeout(() => {
+                            this.innerHTML = originalContent;
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Gagal menyalin link: ', err);
+                    });
+                });
+            });
     });
 </script>
 @endsection

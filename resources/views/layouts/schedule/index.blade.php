@@ -32,15 +32,16 @@
                     <td>{{ $schedule->user->name }}</td>
                     <td>{{ $schedule->date }}</td>
                     <td>{{ $schedule->topic }}</td>
-                    <td>{{ $schedule->start_time }}</td>
-                    <td>{{ $schedule->end_time }}</td>
+                    <td>{{ date('H:i', strtotime($schedule->start_time)) }}</td>
+                    <td>{{ date('H:i', strtotime($schedule->end_time)) }}</td>
                     <td class="text-center">
                         <button class="btn btn-info btn-sm view-btn"
                             data-user="{{ $schedule->user->name }}"
+                            data-group="{{ $schedule->mentoringGroup->name ?? 'Umum' }}"
                             data-date="{{ $schedule->date }}"
                             data-location="{{ $schedule->location }}"
-                            data-start_time="{{ $schedule->start_time }}"
-                            data-end_time="{{ $schedule->end_time }}"
+                            data-start_time="{{ date('H:i', strtotime($schedule->start_time)) }}"
+                            data-end_time="{{ date('H:i', strtotime($schedule->end_time)) }}"
                             data-topic="{{ $schedule->topic }}"
                             data-description="{{ $schedule->description }}"
                             data-bs-toggle="modal" data-bs-target="#viewScheduleModal">
@@ -49,10 +50,11 @@
                         <button class="btn btn-warning btn-sm edit-btn"
                             data-id="{{ $schedule->id }}"
                             data-users_id="{{ $schedule->mentor_id }}"
+                            data-group_id="{{ $schedule->mentoring_group_id }}"
                             data-date="{{ $schedule->date }}"
                             data-location="{{ $schedule->location }}"
-                            data-start_time="{{ $schedule->start_time }}"
-                            data-end_time="{{ $schedule->end_time }}"
+                            data-start_time="{{ date('H:i', strtotime($schedule->start_time)) }}"
+                            data-end_time="{{ date('H:i', strtotime($schedule->end_time)) }}"
                             data-topic="{{ $schedule->topic }}"
                             data-description="{{ $schedule->description }}"
                             data-bs-toggle="modal" data-bs-target="#editScheduleModal">
@@ -90,8 +92,12 @@
             </div>
             <div class="modal-body px-4 py-3">
                 <div class="row mb-2">
-                    <div class="col-4 fw-semibold text-dark">User</div>
+                    <div class="col-4 fw-semibold text-dark">Mentor</div>
                     <div class="col-8" id="view_user"></div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-4 fw-semibold text-dark">Grup</div>
+                    <div class="col-8" id="view_group"></div>
                 </div>
                 <div class="row mb-2">
                     <div class="col-4 fw-semibold text-dark">Tanggal</div>
@@ -131,60 +137,70 @@
 <div class="modal fade" id="addScheduleModal" tabindex="-1" aria-labelledby="addScheduleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <form action="{{ route('schedule.store') }}" method="POST" autocomplete="off">
-                @csrf
-                <div class="modal-content shadow-lg">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title" id="addScheduleModalLabel">
-                                <i class="bi bi-calendar-plus me-2"></i>Tambah Jadwal
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body px-4 py-3">
-                            <div class="mb-3">
-                                    <label for="users_id" class="form-label fw-semibold">User <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="users_id" name="mentor_id" required>
-                                            <option value="" hidden>--Pilih User--</option>
-                                            @foreach($users as $user)
-                                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                            @endforeach
-                                    </select>
-                            </div>
-                            <div class="mb-3">
-                                    <label for="date" class="form-label fw-semibold">Tanggal <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" id="date" name="date" required>
-                            </div>
-                            <div class="mb-3">
-                                    <label for="location" class="form-label fw-semibold">Lokasi <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="location" name="location" required placeholder="Masukkan lokasi">
-                            </div>
-                            <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                            <label for="start_time" class="form-label fw-semibold">Mulai <span class="text-danger">*</span></label>
-                                            <input type="time" class="form-control" id="start_time" name="start_time" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                            <label for="end_time" class="form-label fw-semibold">Selesai <span class="text-danger">*</span></label>
-                                            <input type="time" class="form-control" id="end_time" name="end_time" required>
-                                    </div>
-                            </div>
-                            <div class="mb-3">
-                                    <label for="topic" class="form-label fw-semibold">Topik <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="topic" name="topic" required placeholder="Masukkan topik">
-                            </div>
-                            <div class="mb-3">
-                                    <label for="description" class="form-label fw-semibold">Deskripsi</label>
-                                    <textarea class="form-control" id="description" name="description" rows="2" placeholder="Opsional"></textarea>
-                            </div>
-                    </div>
-                    <div class="modal-footer bg-light">
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                <i class="bi bi-x-circle"></i> Batal
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-save"></i> Simpan
-                        </button>
-                    </div>
+            @csrf
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="addScheduleModalLabel">
+                            <i class="bi bi-calendar-plus me-2"></i>Tambah Jadwal
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <div class="modal-body px-4 py-3">
+                        <div class="mb-3">
+                            <label for="users_id" class="form-label fw-semibold">Mentor<span class="text-danger">*</span></label>
+                            <select class="form-select" id="users_id" name="mentor_id" required>
+                                    <option value="" hidden>--Pilih Mentor--</option>
+                                    @foreach($users as $user)
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                                <label for="group" class="form-label fw-semibold">Grup Mentoring</label>
+                                <select class="form-select" id="group" name="mentoring_group_id">
+                                    <option value="" hidden>--Pilih Grup--</option>
+                                    <option value="">Umum</option>
+                                    @foreach($mentoringGroups as $group)
+                                        <option value="{{ $group->id }}">{{ $group->name }}</option>
+                                    @endforeach
+                                </select>
+                        </div>
+                        <div class="mb-3">
+                                <label for="date" class="form-label fw-semibold">Tanggal <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
+                        <div class="mb-3">
+                                <label for="location" class="form-label fw-semibold">Lokasi <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="location" name="location" required placeholder="Masukkan lokasi">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                    <label for="start_time" class="form-label fw-semibold">Mulai <span class="text-danger">*</span></label>
+                                    <input type="time" class="form-control" id="start_time" name="start_time" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                    <label for="end_time" class="form-label fw-semibold">Selesai <span class="text-danger">*</span></label>
+                                    <input type="time" class="form-control" id="end_time" name="end_time" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                                <label for="topic" class="form-label fw-semibold">Topik <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="topic" name="topic" required placeholder="Masukkan topik">
+                        </div>
+                        <div class="mb-3">
+                                <label for="description" class="form-label fw-semibold">Deskripsi</label>
+                                <textarea class="form-control" id="description" name="description" rows="2" placeholder="Opsional"></textarea>
+                        </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="bi bi-x-circle"></i> Batal
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Simpan
+                    </button>
+                </div>
+            </div>
         </form>
     </div>
 </div>
@@ -204,11 +220,20 @@
                 </div>
                 <div class="modal-body px-4 py-3">
                     <div class="mb-3">
-                        <label for="edit_users_id" class="form-label fw-semibold">User <span class="text-danger">*</span></label>
+                        <label for="edit_users_id" class="form-label fw-semibold">Mentor <span class="text-danger">*</span></label>
                         <select class="form-select" id="edit_users_id" name="mentor_id" required>
-                            <option value="" hidden>--Pilih User--</option>
+                            <option value="" hidden>--Pilih Mentor--</option>
                             @foreach($users as $user)
                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_group" class="form-label fw-semibold">Grup Mentoring</label>
+                        <select class="form-select" id="edit_group" name="mentoring_group_id">
+                            <option value="">Umum</option>
+                            @foreach($mentoringGroups as $group)
+                                <option value="{{ $group->id }}">{{ $group->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -262,6 +287,7 @@
             viewScheduleModal.addEventListener('show.bs.modal', function (event) {
                 var button = event.relatedTarget; // Button that triggered the modal
                 var user = button.getAttribute('data-user');
+                var group = button.getAttribute('data-group');
                 var date = button.getAttribute('data-date');
                 var location = button.getAttribute('data-location');
                 var startTime = button.getAttribute('data-start_time');
@@ -271,6 +297,7 @@
 
                 // Update the modal's content.
                 var viewUser = viewScheduleModal.querySelector('#view_user');
+                var viewGroup = viewScheduleModal.querySelector('#view_group');
                 var viewDate = viewScheduleModal.querySelector('#view_date');
                 var viewLocation = viewScheduleModal.querySelector('#view_location');
                 var viewStartTime = viewScheduleModal.querySelector('#view_start_time');
@@ -279,6 +306,7 @@
                 var viewDescription = viewScheduleModal.querySelector('#view_description');
 
                 viewUser.textContent = user;
+                viewGroup.textContent = group ? group : 'Umum';
                 viewDate.textContent = date;
                 viewLocation.textContent = location;
                 viewStartTime.textContent = startTime;
@@ -291,6 +319,7 @@
         // Edit Schedule Modal
         var editScheduleForm = document.getElementById('editScheduleForm');
         var editUsersId = document.getElementById('edit_users_id');
+        var editGroup = document.getElementById('edit_group');
         var editDate = document.getElementById('edit_date');
         var editLocation = document.getElementById('edit_location');
         var editStartTime = document.getElementById('edit_start_time');
@@ -302,6 +331,7 @@
             button.addEventListener('click', function () {
                 var id = this.getAttribute('data-id');
                 var users_id = this.getAttribute('data-users_id');
+                var group_id = this.getAttribute('data-group_id');
                 var date = this.getAttribute('data-date');
                 var location = this.getAttribute('data-location');
                 var start_time = this.getAttribute('data-start_time');
@@ -310,6 +340,7 @@
                 var description = this.getAttribute('data-description');
                 editScheduleForm.action = '/schedule/' + id;
                 editUsersId.value = users_id;
+                editGroup.value = group_id ? group_id : '';
                 editDate.value = date;
                 editLocation.value = location;
                 editStartTime.value = start_time;

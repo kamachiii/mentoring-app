@@ -66,7 +66,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/presensi" class="nav-link @if (Route::currentRouteName() == 'presensi') active @endif">
+                <a href="{{ route('presence.index') }}" class="nav-link @if (Route::currentRouteName() == 'presence.index') active @endif">
                   <i class="nav-icon bi bi-journal-check"></i>
                   <p>
                     Absensi
@@ -74,7 +74,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/forum" class="nav-link @if (Route::currentRouteName() == 'forum-diskusi') active @endif">
+                <a href="{{ route('forum.index') }}" class="nav-link @if (Route::currentRouteName() == 'forum.index') active @endif">
                   <i class="nav-icon bi bi-chat-left-text"></i>
                   <p>
                     Forum Diskusi

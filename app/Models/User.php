@@ -73,7 +73,7 @@ class User extends Authenticatable
 
     public function mentoringGroup()
     {
-        return $this->belongsTo(MentoringGroup::class, 'mentoring_group_id', 'id');
+        return $this->belongsTo(MentoringGroup::class);
     }
 
     public function hasRole(string $role): bool

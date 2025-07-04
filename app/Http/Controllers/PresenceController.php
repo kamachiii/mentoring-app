@@ -2,85 +2,92 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Schedule;
 use App\Models\Presence;
+use App\Models\Schedule;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class PresenceController extends Controller
 {
-    
-    public function index(Request $request)
+    public function index()
     {
-        
-        $currentMentor = Auth::user();
+        $presences = Presence::with(['user', 'schedule'])->latest()->paginate(10);
+        if(Auth::user()->role == 'user') {
+            $users = User::where('id', Auth::user()->id)->get();
+        }else {
+            $users = User::where('role', 'user')->get();
+        }
+        $schedules = Schedule::latest()->get();
 
-        
-        if (!$currentMentor || !$currentMentor->isMentor()) {
-            return redirect('/dashboard')->with('error', 'Anda tidak memiliki akses sebagai mentor untuk halaman presensi.');
+        confirmDelete('Delete', 'Are you sure you want to delete this presence record?');
+        return view('layouts.presence.index', compact('presences', 'users', 'schedules'));
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            $validate = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'schedule_id' => 'required|exists:schedules,id',
+                'status' => 'required|in:present,absent,late,sick',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $errors = $e->validator->errors()->all();
+            Alert::error('Error', implode('<br>', $errors));
+            return redirect()->back()->withInput();
         }
 
-        $currentMentorId = $currentMentor->id;
-        $mentorName = $currentMentor->name;
-
-        $showResults = false;
-        $presensiDateDisplay = now()->translatedFormat('d F Y'); 
-
-        
-        $scheduleToday = Schedule::firstOrCreate(
-            [
-                'user_id' => $currentMentorId,
-                'date' => now()->toDateString(), 
-            ],
-            [
-                'start_time' => '09:00:00',
-                'end_time' => '10:00:00',  
-                'topic' => 'Sesi Mentoring Harian ' . now()->translatedFormat('d F Y'),
-                'description' => 'Jadwal otomatis untuk presensi harian.',
-            ]
-        );
-
-        if ($request->isMethod('post')) {
-            $presensiData = $request->input('ket');
-
-            
-            Presence::where('schedule_id', $scheduleToday->id)
-                    ->whereDate('created_at', now()->toDateString())
-                    ->delete();
-
-            if ($presensiData) {
-                foreach ($presensiData as $studentId => $status) {
-                    if (!empty($status)) { 
-                        $student = User::where('id', $studentId)->where('role', 'user')->first();
-                        if ($student) {
-                            Presence::create([
-                                'user_id' => $studentId,
-                                'schedule_id' => $scheduleToday->id,
-                                'status' => $status,
-                                'created_at' => now(), // Catat tanggal presensi
-                                'updated_at' => now(),
-                            ]);
-                        }
-                    }
-                }
-            }
-            $showResults = true; 
+        $createPresence = Presence::create($validate);
+        if (!$createPresence) {
+            Alert::error('Error', 'Failed to create presence record.');
+            return redirect()->back();
         }
 
-        
-        $allStudents = User::where('role', 'user')->get();
+        Alert::success('Success', 'Presence record created successfully.');
+        return redirect()->route('presence.index');
+    }
 
-        
-        $existingPresences = [];
-        if ($scheduleToday) { 
-             $existingPresences = Presence::where('schedule_id', $scheduleToday->id)
-                                    ->whereDate('created_at', now()->toDateString())
-                                    ->pluck('status', 'user_id')
-                                    ->toArray();
+    public function update(Request $request, $id)
+    {
+        try {
+            $presence = Presence::findOrFail($id);
+            $validate = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'schedule_id' => 'required|exists:schedules,id',
+                'status' => 'required|in:present,absent,sick,permit',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $errors = $e->validator->errors()->all();
+            Alert::error('Error', implode('<br>', $errors));
+            return redirect()->back()->withInput();
         }
 
+        $updatePresence = $presence->update($validate);
+        if (!$updatePresence) {
+            Alert::error('Error', 'Failed to update presence record.');
+            return redirect()->back();
+        }
 
-        return view('presensi', compact('mentorName', 'allStudents', 'showResults', 'presensiDateDisplay', 'existingPresences', 'currentMentorId'));
+        Alert::success('Success', 'Presence record updated successfully.');
+        return redirect()->route('presence.index');
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $presence = Presence::findOrFail($id);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            Alert::error('Error', 'Presence record not found.');
+            return redirect()->back();
+        }
+
+        if (!$presence->delete()) {
+            Alert::error('Error', 'Failed to delete presence record.');
+            return redirect()->back();
+        }
+        Alert::success('Success', 'Presence record deleted successfully.');
+        return redirect()->route('presence.index');
     }
 }

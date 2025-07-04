@@ -12,9 +12,10 @@ class MentoringGroupController extends Controller
     public function index()
     {
         $groups = MentoringGroup::latest()->paginate(5);
+        $users = User::where('role', '!=', 'admin')->get();
 
         confirmDelete('Delete', 'Are you sure you want to delete this mentoring group?');
-        return view('layouts.mentoring_group.index', compact('groups'));
+        return view('layouts.mentoring_group.index', compact('groups', 'users'));
     }
 
     public function store(Request $request)
@@ -36,6 +37,32 @@ class MentoringGroupController extends Controller
         }
 
         Alert::success('Success', 'Mentoring group created successfully.');
+        return redirect()->route('mentoring-group.index');
+    }
+
+    public function storeMember(Request $request)
+    {
+        try {
+            $validate = $request->validate([
+                'group_id' => 'required|exists:mentoring_group,id',
+                'user_id' => 'required|exists:users,id',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $errors = $e->validator->errors()->all();
+            Alert::error('Error', implode('<br>', $errors));
+            return redirect()->back()->withInput();
+        }
+
+        $group = MentoringGroup::findOrFail($validate['group_id']);
+        if ($group->users()->where('id', $validate['user_id'])->exists()) {
+            Alert::error('Error', 'User is already a member of this mentoring group.');
+            return redirect()->back();
+        }
+
+        $user = User::findOrFail($validate['user_id']);
+        $user->mentoring_group_id = $validate['group_id'];
+        $user->save();
+        Alert::success('Success', 'User added to mentoring group successfully.');
         return redirect()->route('mentoring-group.index');
     }
 
