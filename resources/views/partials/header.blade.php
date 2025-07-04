@@ -152,7 +152,7 @@
             <li class="nav-item dropdown user-menu">
               <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <img
-                  src="{{ Auth::user()->profile_picture == NULL ? asset('assets/img/user2-160x160.jpg') : asset('storage/profile_picture/'.Auth::user()->profile_picture) }}"
+                  src="https://placehold.co/40x40/{{ Auth::user()->role == 'admin' ? '0d6efd' : '198754' }}/ffffff?text={{ Str::substr(Auth::user()->name, 0, 1) }}"
                   class="user-image rounded-circle shadow"
                   alt="User Image"
                 />
@@ -162,7 +162,7 @@
                 <!--begin::User Image-->
                 <li class="user-header text-bg-secondary">
                   <img
-                    src="{{ Auth::user()->profile_picture == NULL ? asset('assets/img/user2-160x160.jpg') : asset('storage/profile_picture/'.Auth::user()->profile_picture) }}"
+                    src="https://placehold.co/40x40/{{ Auth::user()->role == 'admin' ? '0d6efd' : '198754' }}/ffffff?text={{ Str::substr(Auth::user()->name, 0, 1) }}"
                     class="rounded-circle shadow"
                     alt="User Image"
                   />
@@ -172,18 +172,9 @@
                   </p>
                 </li>
                 <!--end::User Image-->
-                <!--begin::Menu Body-->
-                {{-- <li class="user-body">
-                  <div class="row">
-                    <div class="col-4 text-center"><a href="#">Followers</a></div>
-                    <div class="col-4 text-center"><a href="#">Sales</a></div>
-                    <div class="col-4 text-center"><a href="#">Friends</a></div>
-                  </div>
-                </li> --}}
-                <!--end::Menu Body-->
                 <!--begin::User Footer-->
                 <li class="user-footer">
-                    <a href="#" class="btn btn-default btn-flat shadow-2xl">Profile</a>
+                    {{-- <a href="#" class="btn btn-default btn-flat shadow-2xl">Profile</a> --}}
                     <form action="{{ route('logout') }}" class="d-inline" method="post">
                         @csrf
                         <button type="submit" class="btn btn-default btn-flat float-end shadow-2xl">Sign out</button>

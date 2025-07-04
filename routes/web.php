@@ -14,6 +14,7 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
+    Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
@@ -38,6 +39,6 @@ Route::middleware(['role:admin,mentor'])->group(function () {
 Route::middleware(['role:admin,mentor,user'])->group(function () {
     Route::resource('schedule', ScheduleController::class)->except(['store', 'update', 'destroy']);
     Route::resource('presence', PresenceController::class)->except(['store', 'update', 'destroy']);
-    Route::resource('forum', ForumController::class)->except(['store', 'destroy']);
+    Route::resource('forum', ForumController::class)->except(['store', 'update','destroy']);
     Route::post('/forum/comment', [ForumController::class, 'storeComment'])->name('forum.storeComment');
 });

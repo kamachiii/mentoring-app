@@ -9,9 +9,24 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class ForumController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $discussions = Discussion::latest()->with('user')->paginate(5);
+        $search = $request->input('search');
+
+        $query = Discussion::with('user');
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                ->orWhere('content', 'like', "%{$search}%");
+            });
+        }
+
+        $discussions = $query->latest()->paginate(5)->appends(['search' => $search]);
+
+        if ($request->ajax()) {
+            return view('layouts.forum._discussion_list', compact('discussions'))->render();
+        }
 
         confirmDelete('Delete', 'Are you sure you want to delete this discussion?');
         return view('layouts.forum.index', compact('discussions'));

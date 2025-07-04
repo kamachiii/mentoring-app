@@ -42,6 +42,11 @@ class AuthController extends Controller
         $users = User::all();
         return view('layouts.dashboard', compact('users'));
     }
+
+    public function profile()
+    {
+        return view('layouts.user.profile');
+    }
 }
 
 // namespace App\Http\Controllers;

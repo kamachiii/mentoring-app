@@ -45,7 +45,7 @@
                                             <button class="btn btn-info btn-sm btn-detail" title="Detail" data-bs-toggle="modal" data-bs-target="#detailModal{{ $presence->id }}">Lihat</button>
                                             @if(Auth::user()->role == 'admin' || Auth::user()->role == 'mentor')
                                             <button class="btn btn-warning btn-sm btn-edit" title="Edit" data-bs-toggle="modal" data-bs-target="#editModal{{ $presence->id }}">Edit</button>
-                                            <a href="{{ route('presence.destroy', $presence->id) }}" class="btn btn-danger btn-sm" data-confirm-delete">
+                                            <a href="{{ route('presence.destroy', $presence->id) }}" class="btn btn-danger btn-sm" data-confirm-delete>
                                                 Hapus
                                             </a>
                                             @endif
