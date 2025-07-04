@@ -21,8 +21,8 @@ class ScheduleFactory extends Factory
             'user_id' => User::factory(),
             'date' => $this->faker->date(),
             'location' => $this->faker->city(),
-            'start_time' => $this->faker->time('H:i:s'),
-            'end_time' => $this->faker->time('H:i:s'),
+            'start_time' => $this->faker->time('H:i'),
+            'end_time' => $this->faker->time('H:i'),
             'topic' => $this->faker->sentence(3),
             'description' => $this->faker->optional()->paragraph(),
         ];
