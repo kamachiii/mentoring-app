@@ -13,7 +13,7 @@
         </div>
         <div class="col-md-2">
             <button type="button" class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addDiscussionModal">
-                <i class="bi bi-plus-circle me-1"></i> Tambah Diskusi
+                <i class="bi bi-plus-circle me-1"></i> Tambah
             </button>
         </div>
         @endif

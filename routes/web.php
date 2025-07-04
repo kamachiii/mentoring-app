@@ -13,8 +13,6 @@ Route::get('/', function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard'); // Ini yang benar
-    Route::get('/user/dashboard', [AuthController::class, 'dashboard'])->name('user.index'); // Atau nama controller/metode lain yang sesuai
     Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

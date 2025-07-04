@@ -9,7 +9,7 @@
             </h3>
         </div>
         <div class="col-6 align-self-center text-end">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMentoringGroupModal">Tambah Jadwal</button>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMentoringGroupModal">Tambah Grup</button>
         </div>
     </div>
     <div class="card-body">
