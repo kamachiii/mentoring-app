@@ -13,12 +13,15 @@ class PresenceController extends Controller
 {
     public function index()
     {
-        $presences = Presence::with(['user', 'schedule'])->latest()->paginate(10);
         if(Auth::user()->role == 'user') {
-            $users = User::where('id', Auth::user()->id)->get();
-        }else {
-            $users = User::where('role', 'user')->get();
+            $presences = Presence::with(['user', 'schedule'])
+                ->where('user_id', Auth::id())
+                ->latest()
+                ->paginate(10);
+        } else {
+            $presences = Presence::with(['user', 'schedule'])->latest()->paginate(10);
         }
+        $users = User::where('role', 'user')->get();
         $schedules = Schedule::latest()->get();
 
         confirmDelete('Delete', 'Are you sure you want to delete this presence record?');

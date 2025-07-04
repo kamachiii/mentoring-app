@@ -7,11 +7,13 @@
             <div class="card">
                 <div class="card-header d-flex align-items-center">
                     <h3 class="card-title"><i class="fas fa-list me-2"></i>Daftar Kehadiran</h3>
+                    @if(Auth::user()->role == 'admin' || Auth::user()->role == 'mentor')
                     <div class="ms-auto">
                         <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addModal">
                             <i class="fas fa-plus me-1"></i> Tambah Data
                         </button>
                     </div>
+                    @endif
                 </div>
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -41,10 +43,12 @@
                                         </td>
                                         <td class="text-center">
                                             <button class="btn btn-info btn-sm btn-detail" title="Detail" data-bs-toggle="modal" data-bs-target="#detailModal{{ $presence->id }}">Lihat</button>
+                                            @if(Auth::user()->role == 'admin' || Auth::user()->role == 'mentor')
                                             <button class="btn btn-warning btn-sm btn-edit" title="Edit" data-bs-toggle="modal" data-bs-target="#editModal{{ $presence->id }}">Edit</button>
                                             <a href="{{ route('presence.destroy', $presence->id) }}" class="btn btn-danger btn-sm" data-confirm-delete">
                                                 Hapus
                                             </a>
+                                            @endif
                                         </td>
                                     </tr>
 

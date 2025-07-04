@@ -33,12 +33,14 @@ Route::middleware(['role:admin'])->group(function () {
 });
 
 Route::middleware(['role:admin,mentor'])->group(function () {
-    Route::resource('schedule', ScheduleController::class);
-    Route::resource('forum', ForumController::class)->only(['store', 'destroy']);
-    Route::resource('presence', PresenceController::class);
+    Route::resource('schedule', ScheduleController::class)->only(['store', 'update','destroy']);
+    Route::resource('forum', ForumController::class)->only(['store', 'update','destroy']);
+    Route::resource('presence', PresenceController::class)->only(['store', 'update','destroy']);
 });
 
 Route::middleware(['role:admin,mentor,user'])->group(function () {
+    Route::resource('schedule', ScheduleController::class)->except(['store', 'update', 'destroy']);
+    Route::resource('presence', PresenceController::class)->except(['store', 'update', 'destroy']);
     Route::resource('forum', ForumController::class)->except(['store', 'destroy']);
     Route::post('/forum/comment', [ForumController::class, 'storeComment'])->name('forum.storeComment');
 });

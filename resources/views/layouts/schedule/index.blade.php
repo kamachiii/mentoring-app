@@ -8,9 +8,11 @@
                 <i class="bi bi-calendar-event me-2"></i>Jadwal Mentoring
             </h3>
         </div>
+        @if(Auth::user()->role == 'admin' || Auth::user()->role == 'mentor')
         <div class="col-6 align-self-center text-end">
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addScheduleModal">Tambah Jadwal</button>
         </div>
+        @endif
     </div>
     <div class="card-body">
         <table class="table table-bordered">
@@ -47,6 +49,7 @@
                             data-bs-toggle="modal" data-bs-target="#viewScheduleModal">
                             Lihat
                         </button>
+                        @if(Auth::user()->role == 'admin' || Auth::user()->role == 'mentor')
                         <button class="btn btn-warning btn-sm edit-btn"
                             data-id="{{ $schedule->id }}"
                             data-users_id="{{ $schedule->mentor_id }}"
@@ -65,6 +68,7 @@
                             data-confirm-delete>
                             Hapus
                         </a>
+                        @endif
                     </td>
                 </tr>
                 @endforeach
