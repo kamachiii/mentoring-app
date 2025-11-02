@@ -22,21 +22,25 @@ class UserController extends Controller
             $validate = $request->validate([
                 'name'            => 'required|string|max:255',
                 'email'           => 'required|string|email|max:255|unique:users',
-                'password'        => 'required|string|min:8',
+                'password'        => 'required|string|min:8|max:255',
                 'role'            => 'required|in:admin,mentor,user',
-                'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $errors = $e->validator->errors()->all();
             Alert::error('Error', implode('<br>', $errors));
             return redirect()->back()->withInput();
         }
-        $validate['password'] = bcrypt($validate['password']);
+        
+        // Sanitize name input
+        $name = strip_tags($validate['name']);
+        $email = filter_var($validate['email'], FILTER_SANITIZE_EMAIL);
+        
         $createUser = User::create([
-            'name'            => $request->name,
-            'email'           => $request->email,
-            'password'        => bcrypt($request->password),
-            'role'            => $request->role,
+            'name'            => $name,
+            'email'           => $email,
+            'password'        => bcrypt($validate['password']),
+            'role'            => $validate['role'],
             'profile_picture' => $request->file('profile_picture') ? $request->file('profile_picture')->store('profile_pictures', 'public') : null,
         ]);
         if (!$createUser) {
@@ -55,19 +59,29 @@ class UserController extends Controller
             $validate = $request->validate([
                 'name'            => 'required|string|max:255',
                 'email'           => 'required|string|email|max:255|unique:users,email,' . $id,
-                'password'        => 'nullable|string|min:8',
+                'password'        => 'nullable|string|min:8|max:255',
                 'role'            => 'required|in:admin,mentor,user',
-                'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
+            
+            // Sanitize inputs
+            $validate['name'] = strip_tags($validate['name']);
+            $validate['email'] = filter_var($validate['email'], FILTER_SANITIZE_EMAIL);
+            
             if ($request->hasFile('profile_picture')) {
                 if ($user->profile_picture) {
                     Storage::disk('public')->delete($user->profile_picture);
                 }
                 $validate['profile_picture'] = $request->file('profile_picture')->store('profile_pictures', 'public');
             } else {
-                $validate['profile_picture'] = $user->profile_picture; // Keep the old profile picture if not updated
+                $validate['profile_picture'] = $user->profile_picture;
             }
-            $validate['password'] = bcrypt($validate['password']);
+            
+            if (!empty($validate['password'])) {
+                $validate['password'] = bcrypt($validate['password']);
+            } else {
+                unset($validate['password']);
+            }
         } catch (\Illuminate\Validation\ValidationException $e) {
             $errors = $e->validator->errors()->all();
             Alert::error('Error', implode('<br>', $errors));

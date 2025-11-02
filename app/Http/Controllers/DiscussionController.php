@@ -19,10 +19,13 @@ class DiscussionController extends Controller
 
     public function store(Request $request)
     {
+        // Authorization check
+        $this->authorize('create', Discussion::class);
+        
         try {
             $validate = $request->validate([
                 'title' => 'required|string|max:255',
-                'content' => 'required|string',
+                'content' => 'required|string|max:10000',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $errors = $e->validator->errors()->all();
@@ -31,6 +34,10 @@ class DiscussionController extends Controller
         }
 
         $validate['user_id'] = Auth::user()->id;
+        // Sanitize content to prevent XSS
+        $validate['title'] = strip_tags($validate['title']);
+        $validate['content'] = strip_tags($validate['content']);
+        
         $createDiscussion = Discussion::create($validate);
         if (!$createDiscussion) {
             Alert::error('Error', 'Failed to create discussion.');
@@ -45,16 +52,27 @@ class DiscussionController extends Controller
     {
         try {
             $discussion = Discussion::findOrFail($id);
+            
+            // Authorization check
+            $this->authorize('update', $discussion);
+            
             $validate = $request->validate([
                 'title' => 'required|string|max:255',
-                'content' => 'required|string',
+                'content' => 'required|string|max:10000',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $errors = $e->validator->errors()->all();
             Alert::error('Error', implode('<br>', $errors));
             return redirect()->back()->withInput();
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            Alert::error('Error', 'You are not authorized to update this discussion.');
+            return redirect()->back();
         }
 
+        // Sanitize content to prevent XSS
+        $validate['title'] = strip_tags($validate['title']);
+        $validate['content'] = strip_tags($validate['content']);
+        
         $updateDiscussion = $discussion->update($validate);
         if (!$updateDiscussion) {
             Alert::error('Error', 'Failed to update discussion.');
@@ -69,8 +87,14 @@ class DiscussionController extends Controller
     {
         try {
             $discussion = Discussion::findOrFail($id);
+            
+            // Authorization check
+            $this->authorize('delete', $discussion);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             Alert::error('Error', 'Discussion not found.');
+            return redirect()->back();
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            Alert::error('Error', 'You are not authorized to delete this discussion.');
             return redirect()->back();
         }
 

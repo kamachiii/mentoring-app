@@ -21,7 +21,9 @@ Route::middleware('auth')->group(function () {
 // Routes for Guest
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'login'])->name('login');
-    Route::post('/login', [AuthController::class, 'loginAction'])->name('login.action');
+    Route::post('/login', [AuthController::class, 'loginAction'])
+        ->name('login.action')
+        ->middleware('throttle:5,1'); // 5 attempts per minute
 });
 
 Route::middleware(['role:admin'])->group(function () {
