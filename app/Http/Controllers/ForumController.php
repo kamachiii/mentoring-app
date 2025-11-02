@@ -68,6 +68,8 @@ class ForumController extends Controller
 
         $validate['user_id'] = Auth::user()->id;
         // Sanitize content to prevent XSS
+        // Note: strip_tags() removes all HTML. For rich text support, 
+        // consider using a library like HTMLPurifier in future versions
         $validate['title'] = strip_tags($validate['title']);
         $validate['content'] = strip_tags($validate['content']);
         

@@ -18,7 +18,7 @@ class AuthController extends Controller
     {
         $credentials = $request->validate([
             'email' => 'required|email|max:255',
-            'password' => 'required|min:6|max:255',
+            'password' => 'required|min:8|max:255',
         ]);
 
         // Sanitize email input
@@ -45,7 +45,7 @@ class AuthController extends Controller
         // Regenerate CSRF token
         $request->session()->regenerateToken();
         
-        Alert::success('Logout Berhasil', 'Anda telah berhasil keluar.');
+        Alert::success('Logout Successful', 'You have been logged out successfully.');
         return redirect()->route('login');
     }
 
