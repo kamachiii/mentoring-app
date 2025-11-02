@@ -17,22 +17,35 @@ class AuthController extends Controller
     public function loginAction(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6',
+            'email' => 'required|email|max:255',
+            'password' => 'required|min:8|max:255',
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
+        // Sanitize email input
+        $email = filter_var($credentials['email'], FILTER_SANITIZE_EMAIL);
+        
+        if (Auth::attempt(['email' => $email, 'password' => $credentials['password']])) {
+            // Regenerate session to prevent session fixation
+            $request->session()->regenerate();
+            
             Alert::success('Login Successful', 'Welcome back!');
             return redirect()->route('dashboard');
         }
         Alert::error('Login Failed', 'Invalid credentials provided.');
-        return redirect()->back()->withInput();
+        return redirect()->back()->withInput($request->only('email'));
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
-        Alert::success('Logout Berhasil', 'Anda telah berhasil keluar.');
+        
+        // Invalidate the session
+        $request->session()->invalidate();
+        
+        // Regenerate CSRF token
+        $request->session()->regenerateToken();
+        
+        Alert::success('Logout Successful', 'You have been logged out successfully.');
         return redirect()->route('login');
     }
 

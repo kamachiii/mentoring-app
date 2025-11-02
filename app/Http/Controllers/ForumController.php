@@ -12,6 +12,12 @@ class ForumController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        
+        // Sanitize search input to prevent XSS
+        if ($search) {
+            $search = strip_tags($search);
+            $search = htmlspecialchars($search, ENT_QUOTES, 'UTF-8');
+        }
 
         $query = Discussion::with('user');
 
@@ -46,10 +52,13 @@ class ForumController extends Controller
 
     public function store(Request $request)
     {
+        // Authorization check
+        $this->authorize('create', Discussion::class);
+
         try {
             $validate = $request->validate([
                 'title' => 'required|string|max:255',
-                'content' => 'required|string',
+                'content' => 'required|string|max:10000',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $errors = $e->validator->errors()->all();
@@ -58,6 +67,12 @@ class ForumController extends Controller
         }
 
         $validate['user_id'] = Auth::user()->id;
+        // Sanitize content to prevent XSS
+        // Note: strip_tags() removes all HTML. For rich text support, 
+        // consider using a library like HTMLPurifier in future versions
+        $validate['title'] = strip_tags($validate['title']);
+        $validate['content'] = strip_tags($validate['content']);
+        
         $createDiscussion = Discussion::create($validate);
         if (!$createDiscussion) {
             Alert::error('Error', 'Failed to create discussion.');
@@ -73,7 +88,7 @@ class ForumController extends Controller
         try {
             $validate = $request->validate([
                 'discussion_id' => 'required|exists:discussions,id',
-                'content' => 'required|string',
+                'content' => 'required|string|max:5000',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $errors = $e->validator->errors()->all();
@@ -82,6 +97,9 @@ class ForumController extends Controller
         }
 
         $validate['user_id'] = Auth::user()->id;
+        // Sanitize content to prevent XSS
+        $validate['content'] = strip_tags($validate['content']);
+        
         $discussion = Discussion::findOrFail($validate['discussion_id']);
         $createComment = $discussion->comments()->create($validate);
         if (!$createComment) {
@@ -97,16 +115,27 @@ class ForumController extends Controller
     {
         try {
             $discussion = Discussion::findOrFail($id);
+            
+            // Authorization check
+            $this->authorize('update', $discussion);
+            
             $validate = $request->validate([
                 'title' => 'required|string|max:255',
-                'content' => 'required|string',
+                'content' => 'required|string|max:10000',
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             $errors = $e->validator->errors()->all();
             Alert::error('Error', implode('<br>', $errors));
             return redirect()->back()->withInput();
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            Alert::error('Error', 'You are not authorized to update this discussion.');
+            return redirect()->back();
         }
 
+        // Sanitize content to prevent XSS
+        $validate['title'] = strip_tags($validate['title']);
+        $validate['content'] = strip_tags($validate['content']);
+        
         $updateDiscussion = $discussion->update($validate);
         if (!$updateDiscussion) {
             Alert::error('Error', 'Failed to update discussion.');
@@ -121,8 +150,14 @@ class ForumController extends Controller
     {
         try {
             $discussion = Discussion::findOrFail($id);
+            
+            // Authorization check
+            $this->authorize('delete', $discussion);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             Alert::error('Error', 'Discussion not found.');
+            return redirect()->back();
+        } catch (\Illuminate\Auth\Access\AuthorizationException $e) {
+            Alert::error('Error', 'You are not authorized to delete this discussion.');
             return redirect()->back();
         }
 
